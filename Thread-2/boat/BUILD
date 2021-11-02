@@ -46,3 +46,14 @@ cc_binary(
         "-pthread",
     ],
 )
+
+cc_test(
+    name = "boat_test",
+    size = "large",
+    srcs = ["boat_test.cc"],
+    deps = [
+        "@gtest//:gtest_main",
+        ":boat_lib",
+        ":boatGrader_lib",
+    ],
+)

@@ -18,3 +18,17 @@ cc_binary(
         "-pthread",
     ]
 )
+
+cc_test(
+    name = "deadlock_test",
+    size = "large",
+    srcs = ["deadlock_test.cc"],
+    deps = [
+        "@gtest//:gtest_main",
+        "//lib:resource_manager_lib",
+        "//lib:utils_lib",
+        "//lib:workload_lib",
+        "//lib:thread_manager_lib",
+        ":main"
+    ],
+)

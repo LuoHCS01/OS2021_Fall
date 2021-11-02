@@ -19,12 +19,15 @@ void run_one_instruction(Instruction inst, EmbeddingHolder* users, EmbeddingHold
             int length = users->get_emb_length();
             Embedding* new_user = new Embedding(length);
             int user_idx = users->append(new_user);
+            std::vector<EmbeddingGradient*> gradients;
             for (int item_index: inst.payloads) {
                 Embedding* item_emb = items->get_embedding(item_index);
                 // Call cold start for downstream applications, slow
                 EmbeddingGradient* gradient = cold_start(new_user, item_emb);
+                gradients.push_back(gradient);
+            }
+            for (EmbeddingGradient* gradient: gradients) {
                 users->update_embedding(user_idx, gradient, 0.01);
-                delete gradient;
             }
             break;
         }
@@ -42,10 +45,8 @@ void run_one_instruction(Instruction inst, EmbeddingHolder* users, EmbeddingHold
             Embedding* item = items->get_embedding(item_idx);
             EmbeddingGradient* gradient = calc_gradient(user, item, label);
             users->update_embedding(user_idx, gradient, 0.01);
-            delete gradient;
             gradient = calc_gradient(item, user, label);
             items->update_embedding(item_idx, gradient, 0.001);
-            delete gradient;
             break;
         }
         case RECOMMEND: {
@@ -82,11 +83,6 @@ int main(int argc, char *argv[]) {
     // Write the result
     users->write_to_stdout();
     items->write_to_stdout();
-
-    // We only need to delete the embedding holders, as the pointers are all
-    // pointing at the emb_matx of the holders.
-    delete users;
-    delete items;
 
     return 0;
 }

@@ -7,6 +7,13 @@
 
 namespace proj2 {
 
+enum RESOURCE {
+    GPU = 0,
+    MEMORY,
+    DISK,
+    NETWORK
+};
+
 // NOTE: ThreadManager is not thread-safe.
 class ThreadManager {
 public:
@@ -16,10 +23,12 @@ public:
     template <class Fn, class... Args>
     std::thread* new_thread(Fn&& fn, Args&&... args);
     bool is_killed(std::thread::id id) { return !running_status[id]; }
-private:
+
     std::map<std::thread::id, bool> running_status;
     std::map<std::thread::id, std::thread*> running_threads;
-    std::map<std::thread::id, std::function<void()> > functions; 
+    std::map<std::thread::id, std::function<void()>> functions;
+    std::map<std::thread::id, std::map<RESOURCE, int>> budget;
+    std::map<std::thread::id, std::map<RESOURCE, int>> alloc;
 };
 
 template <class Fn, class... Args>

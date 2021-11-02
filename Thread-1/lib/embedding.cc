@@ -150,6 +150,12 @@ EmbeddingHolder::EmbeddingHolder(std::vector<Embedding*> &data) {
     this->emb_matx = data;
 }
 
+EmbeddingHolder::EmbeddingHolder(EmbeddingHolder* origin) {
+    for (Embedding* emb: origin->emb_matx) {
+        this->emb_matx.push_back(new Embedding(emb));
+    }
+}
+
 EmbeddingMatrix EmbeddingHolder::read(std::string filename) {
     std::string line;
     std::ifstream ifs(filename);
@@ -199,12 +205,6 @@ void EmbeddingHolder::write_to_stdout() {
     std::string prefix("[OUTPUT]");
     for (Embedding* emb: this->emb_matx) {
         std::cout << prefix << emb->to_string() << '\n';
-    }
-}
-
-EmbeddingHolder::~EmbeddingHolder() {
-    for (Embedding* emb: this->emb_matx) {
-        delete emb;
     }
 }
 

@@ -9,13 +9,6 @@
 
 namespace proj2 {
 
-enum RESOURCE {
-    GPU = 0,
-    MEMORY,
-    DISK,
-    NETWORK
-};
-
 class ResourceManager {
 public:
     ResourceManager(ThreadManager *t, std::map<RESOURCE, int> init_count): \
@@ -25,8 +18,8 @@ public:
     void release(RESOURCE, int amount);
 private:
     std::map<RESOURCE, int> resource_amount;
-    std::map<RESOURCE, std::mutex> resource_mutex;
-    std::map<RESOURCE, std::condition_variable> resource_cv;
+    std::condition_variable cv;
+    std::mutex mux;
     ThreadManager *tmgr;
 };
 
