@@ -13,7 +13,7 @@ void run_thread(ResourceManager* rmgr, std::map<RESOURCE, int> budget,
                 std::vector<RESOURCE> order, std::map<RESOURCE, int>* block_time) {
     rmgr->budget_claim(budget);
     for (RESOURCE r: order) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
         auto start = std::chrono::duration_cast<std::chrono::milliseconds>
             (std::chrono::system_clock::now().time_since_epoch()).count();
         rmgr->request(r, budget[r]);
@@ -21,7 +21,7 @@ void run_thread(ResourceManager* rmgr, std::map<RESOURCE, int> budget,
             (std::chrono::system_clock::now().time_since_epoch()).count();
         block_time->insert(std::pair<RESOURCE, int>(r, end - start));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     for (RESOURCE r: order) {
         rmgr->release(r, budget[r]);
     }
@@ -38,20 +38,7 @@ class CommonTest : public ::testing::Test {
     std::map<RESOURCE, int> init_resource;
     std::map<RESOURCE, int> budget;
 };
-/*
-TEST_F(CommonTest, test_basic) {
-    std::cout << "--------------- Test Basic ---------------" << std::endl;
-    for (RESOURCE r = GPU; r <= NETWORK; r = RESOURCE(r + 1)) {
-        init_resource[r] = 1;
-    }
-    rmgr = new ResourceManager(tmgr, init_resource);
-    for (RESOURCE r = GPU; r <= NETWORK; r = RESOURCE(r + 1)) {
-        rmgr->budget_claim(budget);
-        EXPECT_EQ(rmgr->request(r, 0), 1);
-        EXPECT_EQ(rmgr->request(r, 1), 0);
-    }
-}
-*/
+
 TEST_F(CommonTest, test_block) {
     std::cout << "--------------- Test Block ---------------" << std::endl;
     for (RESOURCE r = GPU; r <= NETWORK; r = RESOURCE(r + 1)) {
@@ -67,7 +54,7 @@ TEST_F(CommonTest, test_block) {
         std::map<RESOURCE, int> block_time[3];
         int sleep_time[3];
         for (int i = 0; i < 3; i++) {
-            sleep_time[i] = 10 * (rand() % 10 + 5);
+            sleep_time[i] = 10 * (rand() % 5 + 1);
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time[i]));
             threads.emplace_back(run_thread, rmgr, budget, order, &block_time[i]);
         }
@@ -75,8 +62,8 @@ TEST_F(CommonTest, test_block) {
             threads.back().join();
             threads.pop_back();
         }
-        EXPECT_LT(400 - sleep_time[0] - sleep_time[1], block_time[2][r]);
-        EXPECT_LT(block_time[2][r], 600 - sleep_time[0] - sleep_time[1]);
+        EXPECT_LT(150 - sleep_time[0] - sleep_time[1], block_time[2][r]);
+        EXPECT_LT(block_time[2][r], 250 - sleep_time[0] - sleep_time[1]);
     }
 }
 
@@ -102,7 +89,7 @@ TEST_F(CommonTest, test_no_deadlock) {
         budget[i][r_next] = 2;
         order[i].emplace_back(r);
         order[i].emplace_back(r_next);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
         threads.emplace_back(run_thread, rmgr, budget[i], order[i], &block_time[i]);
         i++;
     }
