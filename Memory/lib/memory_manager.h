@@ -37,11 +37,13 @@ public:
     void ClearInfo();
     int GetHolder();
     int GetVid();
+    void SetUsed(bool);
+    bool GetUsed();
 private:
-    int holder; //page holder id (array_id)
+    int holder; // page holder id (array_id)
     int virtual_page_id; // page virtual #
     /*add your extra states here freely for implementation*/
-
+    bool used;
 };
 
 class ArrayList;
@@ -63,6 +65,7 @@ private:
     int next_array_id;
     size_t mma_sz;
     /*add your extra states here freely for implementation*/
+    int ptr_page; // for FIFO
     std::mutex mux;
     Policy replace_policy;
 
