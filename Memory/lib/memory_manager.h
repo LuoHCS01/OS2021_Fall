@@ -65,7 +65,7 @@ private:
     int next_array_id;
     size_t mma_sz;
     /*add your extra states here freely for implementation*/
-    int ptr_page; // for FIFO
+    int ptr_page;
     std::mutex mux;
     Policy replace_policy;
 

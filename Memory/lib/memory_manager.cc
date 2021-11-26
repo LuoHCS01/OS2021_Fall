@@ -182,7 +182,6 @@ namespace proj3 {
     int MemoryManager::ReadPage(int array_id, int virtual_page_id, int offset) {
         // for arrayList of 'array_id', return the target value on its virtual space
         mux.lock();
-        // std::cout << "Array " << array_id << " read in vid " << virtual_page_id << " offset " << offset << std::endl;
         int physical_page_id = page_map[array_id][virtual_page_id];
         if (physical_page_id == -1) {
             PageReplace(array_id, virtual_page_id);
@@ -200,7 +199,6 @@ namespace proj3 {
     void MemoryManager::WritePage(int array_id, int virtual_page_id, int offset, int value) {
         // for arrayList of 'array_id', write 'value' into the target position on its virtual space
         mux.lock();
-        // std::cout << "Array " << array_id << " write " << value << " to vid " << virtual_page_id << " offset " << offset << std::endl;
         int physical_page_id = page_map[array_id][virtual_page_id];
         if (physical_page_id == -1) {
             PageReplace(array_id, virtual_page_id);
@@ -217,7 +215,6 @@ namespace proj3 {
     ArrayList* MemoryManager::Allocate(size_t sz) {
         // when an application requires for memory, create an ArrayList and record mappings from its virtual memory space to the physical memory space
         mux.lock();
-        // std::cout << "Allocate memory space for array id " << next_array_id << " with size " << sz << std::endl;
         ArrayList* arr = new ArrayList(sz, this, next_array_id);
         std::map<int, int> array_page_map;
         // not allocated physical page index is -1
