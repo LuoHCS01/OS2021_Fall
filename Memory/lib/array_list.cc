@@ -26,8 +26,8 @@ namespace proj3 {
         //write 'value' in the virtual index of 'idx' into mma's memory space
         std::pair<int, int> ad = address(idx);
         mma->WritePage(array_id, ad.first, ad.second, value);
-        // std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     ArrayList::~ArrayList(){
+        mma->Release(this);
     }
 } // namespce: proj3

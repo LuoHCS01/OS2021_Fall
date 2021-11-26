@@ -103,6 +103,10 @@ namespace proj3 {
         system("mkdir disk");
     }
     MemoryManager::~MemoryManager(){
+        delete []mem;
+        delete []page_info;
+        delete []free_list;
+        system("rm -rf disk");
     }
     void MemoryManager::PageOut(int physical_page_id){
         //swap out the physical page with the indx of 'physical_page_id out' into a disk file
@@ -186,9 +190,11 @@ namespace proj3 {
         for (size_t i = 0; i < mma_sz; i++) {
             if (page_info[i].GetHolder() == arr->array_id) {
                 page_info[i].ClearInfo();
+                mem[i] = PageFrame();
                 modify(free_list, i, 1);
             }
         }
+        page_map.erase(arr->array_id);
         mux.unlock();
         for (size_t i = 0; i < (arr->size + PageSize - 1) / PageSize; i++) {
             std::remove(disk_filename(arr->array_id, i).c_str());
