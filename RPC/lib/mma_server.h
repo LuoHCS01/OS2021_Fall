@@ -18,10 +18,39 @@
 
 #include "memory_manager.h"
 
+using grpc::Server;
+using grpc::ServerBuilder;
+using grpc::ServerContext;
+using grpc::Status;
+using mma::Mma;
+using mma::AllocateRequest;
+using mma::AllocateReply;
+using mma::FreeRequest;
+using mma::ReadRequest;
+using mma::ReadReply;
+using mma::WriteRequest;
+using mma::Null;
 
 // Logic and data behind the server's behavior.
 
 namespace proj4 {
+
+class MmaServiceImpl final : public Mma::Service {
+  public:
+    Status Allocate(ServerContext* context, const AllocateRequest* request,
+                    AllocateReply* reply) override;
+
+    Status Free(ServerContext* context, const FreeRequest* request,
+                Null* reply) override;
+
+    Status ReadPage(ServerContext* context, const ReadRequest* request,
+                    ReadReply* reply) override;
+
+    Status WritePage(ServerContext* context, const WriteRequest* request,
+                     Null* reply) override;
+    
+    MemoryManager* mma;
+};
 
 // setup a server with UnLimited virtual memory space
 void RunServerUL(size_t phy_page_num);
