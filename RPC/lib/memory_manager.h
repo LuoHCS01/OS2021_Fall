@@ -55,6 +55,7 @@ public:
     int Allocate(size_t);
     void Release(int);
     ~MemoryManager();
+    size_t GetArraySize(int);
 private:
     std::map<int, int> array_size;
     std::map<int, std::map<int, int>> page_map; // // mapping from ArrayList's virtual page # to physical page #
@@ -73,7 +74,7 @@ private:
     void PageReplace(int array_id, int virtual_page_id);
 };
 
-}  // namespce: proj3
+}  // namespce: proj4
 
 #endif
 
