@@ -6,9 +6,9 @@ namespace proj4 {
 ArrayList* MmaClient::Allocate(size_t sz) {
     AllocateRequest request;
     AllocateReply reply;
-    ClientContext context;
 
     do {
+        ClientContext context;
         request.set_size(sz);
         Status status = stub_->Allocate(&context, request, &reply);
         if (!status.ok()) {
@@ -17,7 +17,7 @@ ArrayList* MmaClient::Allocate(size_t sz) {
             return nullptr;
         }
     // If not allocated, start new rpc after 0.1s to prevent busy-waiting
-    } while (!reply.success() && usleep(1000000));
+    } while (!reply.success() && !usleep(1000000));
     
     ArrayList* arr = new ArrayList(sz, this, reply.arrayid());
     return arr;

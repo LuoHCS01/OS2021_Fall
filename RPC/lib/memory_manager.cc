@@ -130,6 +130,10 @@ namespace proj4 {
         system("rm -rf disk");
     }
 
+    size_t MemoryManager::GetArraySize(int arrayid) {
+        return array_size[arrayid];
+    }
+
     void MemoryManager::PageOut(int physical_page_id) {
         // swap out the physical page with the indx of 'physical_page_id out' into a disk file
         int holder = page_info[physical_page_id].GetHolder();
@@ -244,4 +248,4 @@ namespace proj4 {
             std::remove(disk_filename(array_id, i).c_str());
         }
     }
-} // namespce: proj3
+} // namespce: proj4

@@ -50,6 +50,8 @@ class MmaServiceImpl final : public Mma::Service {
                      Null* reply) override;
     
     MemoryManager* mma;
+    size_t max_vir_page_num;
+    std::mutex mux;
 };
 
 // setup a server with UnLimited virtual memory space
